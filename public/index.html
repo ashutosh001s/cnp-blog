@@ -84,6 +84,93 @@
         .post-image-generated {
             background-size: 100px 100px;
         }
+
+        /* loding  */
+        /* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-content {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ff6b35;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #ff6b35;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-dots {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+}
+
+.loading-progress {
+    width: 200px;
+    height: 4px;
+    background: #f3f3f3;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 1rem auto;
+}
+
+.loading-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b35, #ff8c42);
+    border-radius: 2px;
+    animation: progress 2s ease-in-out infinite;
+}
+
+@keyframes progress {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
     </style>
 </head>
 <body class="bg-gradient-to-br from-white to-orange-50 text-gray-800 leading-relaxed">
@@ -234,6 +321,127 @@
                 }
             });
         });
+
+        // loding
+        // Enhanced loading indicator with user-friendly features
+let loadingTimeout;
+let loadingOverlay;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadingOverlay = document.getElementById('loading-overlay');
+    
+    // Show loading indicator when HTMX request starts
+    document.body.addEventListener('htmx:beforeRequest', function(event) {
+        // Clear any existing timeout
+        if (loadingTimeout) {
+            clearTimeout(loadingTimeout);
+        }
+        
+        // Show loading overlay with a slight delay to avoid flash for fast requests
+        loadingTimeout = setTimeout(() => {
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('show');
+                // Prevent scrolling while loading
+                document.body.style.overflow = 'hidden';
+            }
+        }, 100);
+    });
+    
+    // Hide loading indicator when request completes
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        // Clear timeout if request completes quickly
+        if (loadingTimeout) {
+            clearTimeout(loadingTimeout);
+        }
+        
+        // Hide loading overlay
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('show');
+            // Restore scrolling
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Handle errors gracefully
+    document.body.addEventListener('htmx:responseError', function(event) {
+        if (loadingTimeout) {
+            clearTimeout(loadingTimeout);
+        }
+        
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        // Show user-friendly error message
+        showNotification('Something went wrong. Please try again.', 'error');
+    });
+    
+    // Network error handling
+    document.body.addEventListener('htmx:sendError', function(event) {
+        if (loadingTimeout) {
+            clearTimeout(loadingTimeout);
+        }
+        
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        showNotification('Network error. Please check your connection.', 'error');
+    });
+});
+
+// Notification system for errors
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white transform translate-x-full transition-transform duration-300 ${
+        type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Slide in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Slide out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Optional: Add click handler to cancel loading (for impatient users)
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.loading-overlay')) {
+        // Allow users to click outside the loading content to continue browsing
+        // This is optional - remove if you want to force waiting
+        if (loadingOverlay && loadingOverlay.classList.contains('show')) {
+            loadingOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+});
     </script>
+
+    <!-- Add this HTML before the closing </body> tag -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Loading<span class="loading-dots"></span></h3>
+        <p class="text-gray-600 mb-4">Getting your content ready</p>
+        <div class="loading-progress">
+            <div class="loading-progress-bar"></div>
+        </div>
+        <p class="text-sm text-gray-500">This won't take long!</p>
+    </div>
+</div>
 </body>
 </html>
