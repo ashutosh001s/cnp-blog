@@ -4,8 +4,8 @@
     "category": "",
     "slug": "gameloop-architecture",
     "date": "2025-07-04T00:00:00Z",
-    "html_path": "output\\output_gameloop-architecture.html",
-    "markdown_path": "content\\gameloop-architecture.md",
+    "html_path": "output/output_gameloop-architecture.html",
+    "markdown_path": "content/gameloop-architecture.md",
     "tags": [
       "\"game-loop\"",
       "\"game-engine\"",
@@ -21,8 +21,8 @@
     "category": "",
     "slug": "opengl-pipeline",
     "date": "2025-07-04T00:00:00Z",
-    "html_path": "output\\output_opengl-pipeline.html",
-    "markdown_path": "content\\opengl-pipeline.md",
+    "html_path": "output/output_opengl-pipeline.html",
+    "markdown_path": "content/opengl-pipeline.md",
     "tags": [
       "\"opengl\"",
       "\"graphics-programming\"",
@@ -38,8 +38,8 @@
     "category": "",
     "slug": "procedural-content-generation",
     "date": "2025-07-04T00:00:00Z",
-    "html_path": "output\\output_procedural-content-generation.html",
-    "markdown_path": "content\\procedural-content-generation.md",
+    "html_path": "output/output_procedural-content-generation.html",
+    "markdown_path": "content/procedural-content-generation.md",
     "tags": [
       "\"procedural-generation\"",
       "\"algorithms\"",
@@ -55,8 +55,8 @@
     "category": "",
     "slug": "unreal-nanite",
     "date": "2025-07-04T00:00:00Z",
-    "html_path": "output\\output_unreal-nanite.html",
-    "markdown_path": "content\\unreal-nanite.md",
+    "html_path": "output/output_unreal-nanite.html",
+    "markdown_path": "content/unreal-nanite.md",
     "tags": [
       "\"unreal-engine\"",
       "\"nanite\"",
