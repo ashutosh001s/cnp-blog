@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+#content folder
+content/
+
 # Logs
 logs/
 *.log
