@@ -3,6 +3,7 @@ node_modules/
 
 #content folder
 content/
+content
 
 # Logs
 logs/

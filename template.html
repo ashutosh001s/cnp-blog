@@ -10,16 +10,16 @@
     <meta property="og:title" content="{{TITLE}}">
     <meta property="og:description" content="{{DESCRIPTION}}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://codenPixel.com">
+    <meta property="og:url" content="https://codenpixel.com">
     <meta property="og:image" content="/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{TITLE}}">
     <meta name="twitter:description" content="{{DESCRIPTION}}">
     <meta name="twitter:image" content="/assets/twitter-image.png">
-    <link rel="canonical" href="https://codenPixel.com">
+    <link rel="canonical" href="https://codenpixel.com">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -31,7 +31,7 @@
                         'brand-orange-dark': '#e5522d',
                     },
                     backgroundImage: {
-                        'brand-gradient': 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+                       'brand-gradient': 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
                         'brand-gradient-light': 'linear-gradient(135deg, #ff8c42 0%, #ffa726 100%)',
                         'hero-pattern': 'url("data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><defs><pattern id=\'grid\' width=\'10\' height=\'10\' patternUnits=\'userSpaceOnUse\'><path d=\'M 10 0 L 0 0 0 10\' fill=\'none\' stroke=\'rgba(255,255,255,0.1)\' stroke-width=\'0.5\'/></pattern></defs><rect width=\'100\' height=\'100\' fill=\'url(%23grid)\'/></svg>")',
                         'dots-pattern': 'url("data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'20\' cy=\'20\' r=\'2\' fill=\'%23ffffff20\'/><circle cx=\'80\' cy=\'40\' r=\'1\' fill=\'%23ffffff30\'/><circle cx=\'40\' cy=\'70\' r=\'1.5\' fill=\'%23ffffff25\'/><circle cx=\'60\' cy=\'10\' r=\'1\' fill=\'%23ffffff20\'/><circle cx=\'10\' cy=\'60\' r=\'1\' fill=\'%23ffffff30\'/><circle cx=\'90\' cy=\'80\' r=\'2\' fill=\'%23ffffff15\'/></svg>")',
@@ -40,6 +40,7 @@
                         'float': 'float 20s ease-in-out infinite',
                         'pulse-slow': 'pulse 3s ease-in-out infinite',
                         'bounce-slow': 'bounce 3s ease-in-out infinite',
+                        'spin-slow': 'spin 2s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -61,6 +62,8 @@
         }
         .htmx-indicator {
             display: none;
+            text-align: center;
+            padding: 2rem;
         }
         .htmx-request .htmx-indicator {
             display: block;
@@ -104,7 +107,13 @@
             </button>
         </nav>
     </header>
-    <div id="main-content" class="pt-20">{{CONTENT}}</div>
+    <div id="main-content" class="pt-20">
+        <div class="htmx-indicator">
+            <div class="w-12 h-12 border-4 border-brand-orange border-t-transparent rounded-full animate-spin-slow mx-auto mb-4"></div>
+            <p class="text-brand-orange font-semibold text-lg">Loading...</p>
+        </div>
+        {{CONTENT}}
+    </div>
     <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-5">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -132,14 +141,18 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 CodeNPixel. All rights reserved.</p>
+                <p class="text-gray-400">© 2024 CodeNPixel. All rights reserved.</p>
             </div>
         </div>
     </footer>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
+        document.body.addEventListener('htmx:beforeRequest', function(event) {
+            console.log('HTMX request started for:', event.detail.elt.getAttribute('hx-get'));
+        });
         document.body.addEventListener('htmx:afterRequest', function(event) {
-            if (event.detail.xhr.responseURL.includes('/newsletter')) {
+            console.log('HTMX request completed for:', event.detail.elt.getAttribute('hx-get'), 'Status:', event.detail.xhr.status);
+            if (event.detail.xhr.responseURL && event.detail.xhr.responseURL.includes('/newsletter')) {
                 if (event.detail.xhr.status === 200) {
                     const form = event.target;
                     form.innerHTML = '<p class="text-brand-orange font-bold text-lg">Thank you for subscribing!</p>';
@@ -149,8 +162,48 @@
                 }
             }
         });
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            console.log('HTMX swap completed for:', event.detail.pathInfo.requestPath);
+            const target = event.detail.target;
+            let title = 'CodeNPixel - Game Dev & Graphics Programming';
+            let description = 'Dive into game development and graphics programming with CodeNPixel. Learn Unreal Engine, OpenGL, and more through tutorials and insights.';
+            const path = event.detail.pathInfo.requestPath || window.location.pathname;
+
+            if (path.startsWith('/posts')) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const filter = urlParams.get('filter') || 'all';
+                const value = urlParams.get('value') || '';
+                title = filter === 'tag' ? `Posts tagged with "${value}" - CodeNPixel` :
+                        filter === 'category' ? `${value} Posts - CodeNPixel` :
+                        'All Posts - CodeNPixel';
+                description = `Explore ${filter === 'tag' ? `posts tagged with "${value}"` : filter === 'category' ? `${value} posts` : 'all posts'} on game development and graphics programming at CodeNPixel.`;
+            } else if (path.startsWith('/post/')) {
+                const postTitle = target.querySelector('h1')?.textContent?.trim() || 'Post';
+                title = `${postTitle} - CodeNPixel`;
+                description = target.querySelector('.prose')?.textContent?.substring(0, 160)?.trim() || 'Read this post on game development and graphics programming at CodeNPixel.';
+            } else if (path === '/' || path === '/home') {
+                title = 'CodeNPixel - Game Dev & Graphics Programming';
+                description = 'Dive into game development and graphics programming with CodeNPixel. Learn Unreal Engine, OpenGL, and more through tutorials and insights.';
+            }
+
+            document.title = title;
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', description);
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.setAttribute('content', title);
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc) ogDesc.setAttribute('content', description);
+            const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+            if (twitterTitle) twitterTitle.setAttribute('content', title);
+            const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+            if (twitterDesc) twitterDesc.setAttribute('content', description);
+            const canonical = document.querySelector('link[rel="canonical"]');
+            if (canonical) canonical.setAttribute('href', `https://codenpixel.com${path}`);
+            const ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) ogUrl.setAttribute('content', `https://codenpixel.com${path}`);
+        });
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
