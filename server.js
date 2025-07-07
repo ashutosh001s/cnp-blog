@@ -146,7 +146,7 @@ app.get('/api/posts', (req, res) => {
                         </span>
                     `).join('')}
                 </div>
-                <a class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 cursor-pointer" 
+                <a href="/post/${post.slug}"  class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 cursor-pointer" 
                    hx-get="/post/${post.slug}" hx-target="#main-content" hx-push-url="/post/${post.slug}">
                    Read More 
                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

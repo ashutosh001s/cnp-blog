@@ -27,16 +27,16 @@ function renderMainHTML(content, title, description) {
     <meta property="og:title" content="{{TITLE}}">
     <meta property="og:description" content="{{DESCRIPTION}}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://codenPixel.com">
+    <meta property="og:url" content="https://codenpixel.com">
     <meta property="og:image" content="/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{TITLE}}">
     <meta name="twitter:description" content="{{DESCRIPTION}}">
     <meta name="twitter:image" content="/assets/twitter-image.png">
-    <link rel="canonical" href="https://codenPixel.com">
+    <link rel="canonical" href="https://codenpixel.com">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -49,7 +49,6 @@ function renderMainHTML(content, title, description) {
                     },
                     backgroundImage: {
                         'brand-gradient': 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
-                        'brand-gradient-light': 'linear-gradient(135deg, #ff8c42 0%, #ffa726 100%)',
                         'hero-pattern': 'url("data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><defs><pattern id=\\'grid\\' width=\\'10\\' height=\\'10\\' patternUnits=\\'userSpaceOnUse\\'><path d=\\'M 10 0 L 0 0 0 10\\' fill=\\'none\\' stroke=\\'rgba(255,255,255,0.1)\\' stroke-width=\\'0.5\\'/></pattern></defs><rect width=\\'100\\' height=\\'100\\' fill=\\'url(%23grid)\\'/></svg>")',
                         'dots-pattern': 'url("data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><circle cx=\\'20\\' cy=\\'20\\' r=\\'2\\' fill=\\'%23ffffff20\\'/><circle cx=\\'80\\' cy=\\'40\\' r=\\'1\\' fill=\\'%23ffffff30\\'/><circle cx=\\'40\\' cy=\\'70\\' r=\\'1.5\\' fill=\\'%23ffffff25\\'/><circle cx=\\'60\\' cy=\\'10\\' r=\\'1\\' fill=\\'%23ffffff20\\'/><circle cx=\\'10\\' cy=\\'60\\' r=\\'1\\' fill=\\'%23ffffff30\\'/><circle cx=\\'90\\' cy=\\'80\\' r=\\'2\\' fill=\\'%23ffffff15\\'/></svg>")',
                     },
@@ -149,7 +148,7 @@ function renderMainHTML(content, title, description) {
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 CodeNPixel. All rights reserved.</p>
+                <p class="text-gray-400">© 2024 CodeNPixel. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -229,10 +228,10 @@ function getHomeContent(posts) {
                 <div class="max-w-4xl mx-auto">
                     <h1 class="text-5xl md:text-6xl font-bold mb-6 text-shadow-lg">CodeNPixel</h1>
                     <p class="text-xl md:text-2xl mb-8 opacity-90">Dive into Game Development & Graphics Programming</p>
-                    <button class="bg-white text-brand-orange px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl shadow-lg cursor-pointer"
-                            hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
+                    <a href="/posts" class="bg-white text-brand-orange px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl shadow-lg cursor-pointer"
+                       hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
                         Explore Posts
-                    </button>
+                    </a>
                 </div>
             </div>
         </section>
@@ -291,16 +290,18 @@ function getPostsContent(posts, filterType = 'all', filterValue = '') {
                 <p class="text-gray-600 leading-relaxed mb-4">${post.description}</p>
                 <div class="flex flex-wrap gap-2 mb-4">
                     ${post.tags.map(tag => `
-                        <span class="bg-brand-gradient text-white px-3 py-1 rounded-full text-xs font-medium cursor-pointer hover:scale-105 transition-transform duration-200" 
-                              hx-get="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
-                              hx-target="#main-content" 
-                              hx-push-url="/posts?filter=tag&value=${tag.replace(/"/g, '')}">
+                        <a href="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
+                           class="bg-brand-gradient text-white px-3 py-1 rounded-full text-xs font-medium cursor-pointer hover:scale-105 transition-transform duration-200" 
+                           hx-get="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
+                           hx-target="#main-content" 
+                           hx-push-url="/posts?filter=tag&value=${tag.replace(/"/g, '')}">
                             #${tag.replace(/"/g, '')}
-                        </span>
+                        </a>
                     `).join('')}
                 </div>
-                <a class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 cursor-pointer" 
-                   hx-get="/post/${post.slug}" hx-target="#main-content" hx-push-url="/post/${post.slug}">
+                <a href="/post/${post.slug}" 
+                   class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 cursor-pointer" 
+                   hx-get="/post/${post.slug}" hx-target="#main-content" hx-push-url="/post/${post.slug} ">
                    Read More 
                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -311,12 +312,13 @@ function getPostsContent(posts, filterType = 'all', filterValue = '') {
     `).join('');
     const allTags = [...new Set(posts.flatMap(post => post.tags.map(tag => tag.replace(/"/g, ''))))];
     const tagButtons = allTags.map(tag => `
-        <button class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${filterType === 'tag' && filterValue === tag ? 'bg-brand-gradient text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" 
-                hx-get="/posts?filter=tag&value=${tag}" 
-                hx-target="#main-content" 
-                hx-push-url="/posts?filter=tag&value=${tag}">
+        <a href="/posts?filter=tag&value=${tag}" 
+           class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${filterType === 'tag' && filterValue === tag ? 'bg-brand-gradient text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" 
+           hx-get="/posts?filter=tag&value=${tag}" 
+           hx-target="#main-content" 
+           hx-push-url="/posts?filter=tag&value=${tag}">
             #${tag}
-        </button>
+        </a>
     `).join('');
     return `
         <div class="min-h-screen bg-gradient-to-br from-white to-orange-50 py-8">
@@ -331,12 +333,13 @@ function getPostsContent(posts, filterType = 'all', filterValue = '') {
                 </div>
                 <div class="mb-8">
                     <div class="flex flex-wrap justify-center gap-3 mb-6">
-                        <button class="px-6 py-3 rounded-full font-semibold transition-all duration-200 cursor-pointer ${filterType === 'all' ? 'bg-brand-gradient text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'}" 
-                                hx-get="/posts" 
-                                hx-target="#main-content" 
-                                hx-push-url="/posts">
+                        <a href="/posts" 
+                           class="px-6 py-3 rounded-full font-semibold transition-all duration-200 cursor-pointer ${filterType === 'all' ? 'bg-brand-gradient text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'}" 
+                           hx-get="/posts" 
+                           hx-target="#main-content" 
+                           hx-push-url="/posts">
                             All Posts
-                        </button>
+                        </a>
                     </div>
                     <div class="text-center mb-4">
                         <span class="text-gray-600 font-medium">Filter by tags:</span>
@@ -353,10 +356,11 @@ function getPostsContent(posts, filterType = 'all', filterValue = '') {
                         <div class="text-6xl mb-4">📝</div>
                         <h3 class="text-xl font-semibold text-gray-700 mb-2">No posts found</h3>
                         <p class="text-gray-500 mb-6">Try adjusting your filter or browse all posts</p>
-                        <button class="bg-brand-gradient text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200" 
-                                hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
+                        <a href="/posts" 
+                           class="bg-brand-gradient text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200" 
+                           hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
                             View All Posts
-                        </button>
+                        </a>
                     </div>
                 ` : ''}
             </div>
@@ -392,13 +396,14 @@ function getPostContent(posts, postSlug) {
         <div class="min-h-screen bg-gradient-to-br from-white to-orange-50 py-8">
             <div class="container mx-auto px-5">
                 <div class="max-w-6xl mx-auto">
-                    <button class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 mb-8 cursor-pointer" 
-                            hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
+                    <a href="/posts" 
+                       class="inline-flex items-center text-brand-orange font-semibold hover:text-brand-orange-light transition-colors duration-200 mb-8 cursor-pointer" 
+                       hx-get="/posts" hx-target="#main-content" hx-push-url="/posts">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                         Back to Posts
-                    </button>
+                    </a>
                     <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
                         <div class="h-64 bg-brand-gradient relative overflow-hidden">
                             <div class="absolute inset-0 bg-dots-pattern bg-repeat animate-float-dots opacity-30"></div>
@@ -426,12 +431,13 @@ function getPostContent(posts, postSlug) {
                             </div>
                             <div class="flex flex-wrap gap-2 mb-8">
                                 ${post.tags.map(tag => `
-                                    <span class="bg-brand-gradient text-white px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:scale-105 transition-transform duration-200" 
-                                          hx-get="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
-                                          hx-target="#main-content" 
-                                          hx-push-url="/posts?filter=tag&value=${tag.replace(/"/g, '')}">
+                                    <a href="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
+                                       class="bg-brand-gradient text-white px-4 py-2 rounded-full text-sm font-medium cursor-pointer hover:scale-105 transition-transform duration-200" 
+                                       hx-get="/posts?filter=tag&value=${tag.replace(/"/g, '')}" 
+                                       hx-target="#main-content" 
+                                       hx-push-url="/posts?filter=tag&value=${tag.replace(/"/g, '')}">
                                         #${tag.replace(/"/g, '')}
-                                    </span>
+                                    </a>
                                 `).join('')}
                             </div>
                             <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
@@ -445,4 +451,4 @@ function getPostContent(posts, postSlug) {
     `;
 }
 
-module.exports = { renderMainHTML, getHomeContent, getPostsContent, getPostContent ,generatePostImage};
+module.exports = { renderMainHTML, getHomeContent, getPostsContent, getPostContent, generatePostImage };
